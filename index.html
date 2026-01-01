@@ -1,0 +1,175 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>الخبير التعليمي الذكي</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Noto+Sans+Arabic:wght@400;500;700&family=Noto+Sans:wght@400;500;700&display=swap" rel="stylesheet" />
+    <!-- Material Symbols -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&display=swap" rel="stylesheet" />
+    <!-- PDF Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#137fec",
+              "primary-hover": "#0b63c1",
+              "background-light": "#f6f7f8",
+              "background-dark": "#101922",
+              "surface": "#ffffff",
+              "surface-dark": "#1a2632",
+            },
+            fontFamily: {
+              "display": ["'Noto Sans Arabic'", "'Noto Sans'", "Inter", "sans-serif"],
+              "sans": ["'Noto Sans Arabic'", "'Noto Sans'", "Inter", "sans-serif"],
+            },
+            borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "3xl": "1.5rem", "full": "9999px" },
+          },
+        },
+      }
+    </script>
+    <style>
+      body {
+        font-family: 'Noto Sans Arabic', 'Noto Sans', 'Inter', sans-serif;
+        background-color: #f6f7f8;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      .no-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+      .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+
+      /* نظام الطباعة المتقدم - محاكاة الاختبارات الرسمية */
+      @media print {
+        @page {
+          size: A4;
+          margin: 1cm;
+        }
+
+        .no-print, header, footer, .grid:not(.exam-header-grid), button, nav, aside {
+          display: none !important;
+        }
+        
+        body, #root {
+          background-color: white !important;
+          width: 100% !important;
+          max-width: none !important;
+          margin: 0 !important;
+          padding: 0 !important;
+          height: auto !important;
+          overflow: visible !important;
+          color: black !important;
+        }
+
+        main {
+          height: auto !important;
+          overflow: visible !important;
+          padding: 0 !important;
+          margin: 0 !important;
+          background: white !important;
+        }
+
+        /* تنسيق الورقة كاختبار رسمي */
+        .question-card {
+          border: none !important;
+          border-bottom: 1px solid #000 !important;
+          box-shadow: none !important;
+          break-inside: avoid;
+          page-break-inside: avoid;
+          margin-bottom: 25px !important;
+          padding-bottom: 15px !important;
+          border-radius: 0 !important;
+          display: block !important;
+          background: white !important;
+        }
+
+        .question-text {
+          font-size: 14pt !important;
+          line-height: 1.8 !important;
+          color: black !important;
+          margin-bottom: 15px !important;
+          font-weight: 700 !important;
+        }
+
+        .option-item {
+          font-size: 12pt !important;
+          border: 1px solid #000 !important;
+          background: white !important;
+          color: black !important;
+          margin-bottom: 8px !important;
+          padding: 10px 15px !important;
+          border-radius: 6px !important;
+        }
+
+        .exam-header {
+          display: block !important;
+          text-align: center;
+          margin-bottom: 30px;
+          border: 2px solid black;
+          padding: 20px;
+          position: relative;
+        }
+
+        .score-box {
+          border: 2px solid black !important;
+          background-color: #fff !important;
+          padding: 15px !important;
+          min-width: 150px;
+          text-align: center;
+        }
+
+        .answer-key {
+          display: block !important;
+          font-size: 11pt !important;
+          color: #111 !important;
+          margin-top: 15px !important;
+          font-style: italic !important;
+          border-top: 1.5px dashed #000 !important;
+          padding-top: 10px !important;
+        }
+
+        /* إخفاء أي خلفيات ملونة في وضع الطباعة */
+        .bg-blue-50, .bg-slate-50, .bg-green-50, .bg-purple-50 {
+          background-color: transparent !important;
+          border-color: #000 !important;
+          color: #000 !important;
+        }
+      }
+
+      /* إخفاء ترويسة الاختبار في العرض العادي */
+      .exam-header {
+        display: none;
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "react": "https://esm.sh/react@^19.2.3",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "@google/genai": "https://esm.sh/@google/genai@^1.34.0",
+    "react-router-dom": "https://esm.sh/react-router-dom@^7.11.0"
+  }
+}
+</script>
+</head>
+  <body class="bg-background-light text-[#111418]">
+    <div id="root"></div>
+  </body>
+</html>
