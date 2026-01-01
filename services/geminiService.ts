@@ -2,13 +2,13 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { Question, QuestionType, Difficulty } from "../types";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
-
 export const generateQuestionsFromText = async (
   content: string,
   type: QuestionType,
   difficulty: Difficulty
 ): Promise<Question[]> => {
+  // Always create a new GoogleGenAI instance right before making an API call.
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   const model = "gemini-3-flash-preview";
   
   const prompt = `Based on the following content, generate 5 questions.
@@ -46,6 +46,7 @@ export const generateQuestionsFromText = async (
       }
     });
 
+    // Access the .text property directly.
     const data = JSON.parse(response.text || "[]");
     return data.map((q: any, index: number) => ({
       ...q,
@@ -62,6 +63,8 @@ export const chatWithBot = async (
   message: string,
   context: string
 ) => {
+  // Always create a new GoogleGenAI instance right before making an API call.
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   const model = "gemini-3-flash-preview";
   
   const chat = ai.chats.create({

@@ -1,11 +1,15 @@
 
 import React, { useState } from 'react';
-import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+// Use namespace import to resolve potential issues with named exports in some environments
+import * as ReactRouterDOM from 'react-router-dom';
 import SettingsPage from './pages/SettingsPage';
 import QuestionsDisplayPage from './pages/QuestionsDisplayPage';
 import ChatPage from './pages/ChatPage';
 import { AppState, Question, ChatMessage } from './types';
 import { generateQuestions } from './services/aiService';
+
+// Destructure components from the namespace to ensure availability
+const { HashRouter, Routes, Route, Navigate } = ReactRouterDOM;
 
 const App: React.FC = () => {
   const [state, setState] = useState<AppState>({
@@ -21,7 +25,7 @@ const App: React.FC = () => {
     messages: [
       {
         role: 'model',
-        text: 'أهلاً بك! أنا "Gemini"، خبيرك التعليمي الذكي. 🎓 لقد تم تزويدي بأحدث تقنيات الذكاء الاصطناعي لمساعدتك في تحليل ملفاتك وتوليد أسئلة احترافية. ابدأ برفع ملفك وتحديد الفصل من الإعدادات لنبدأ!',
+        text: 'أهلاً بك! أنا "Gemini"، خبيرك التعليمي الذكي. 🎓 ابدأ برفع ملفك وتحديد الإعدادات لنقوم معاً بإنشاء أفضل الأسئلة التدريبية.',
         timestamp: new Date().toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' })
       }
     ]
@@ -43,29 +47,30 @@ const App: React.FC = () => {
   };
 
   const handleStartProcess = async () => {
-    const context = state.settings.fileName 
-      ? `تحليل ملف: ${state.settings.fileName}` 
-      : "دراسة مادة علمية عامة";
-    
-    const questions = await generateQuestions(
-      context, 
-      state.settings.type, 
-      state.settings.difficulty, 
-      state.settings.questionCount,
-      state.settings.chapterName
-    );
-    
-    setQuestions(questions);
-    
-    addMessage({
-      role: 'model',
-      text: `لقد انتهيت من تحليل ${state.settings.chapterName ? `الفصل "${state.settings.chapterName}"` : 'المحتوى'} باستخدام Gemini. 🚀 قمت بتجهيز ${questions.length} أسئلة بمستوى ${state.settings.difficulty}. هل نراجعها سوياً؟`,
-      timestamp: new Date().toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' })
-    });
+    const context = `المحتوى: ${state.settings.fileName || 'دراسة عامة'}. الفصل: ${state.settings.chapterName}.`;
+    try {
+      const questions = await generateQuestions(
+        context, 
+        state.settings.type, 
+        state.settings.difficulty, 
+        state.settings.questionCount,
+        state.settings.chapterName
+      );
+      setQuestions(questions);
+      addMessage({
+        role: 'model',
+        text: `تم توليد ${questions.length} سؤالاً بنجاح! يمكنك الآن مراجعة الأسئلة في بنك الأسئلة أو الاستمرار في الدردشة معي حول الدرس.`,
+        timestamp: new Date().toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' })
+      });
+    } catch (error) {
+      console.error(error);
+      alert("حدث خطأ أثناء توليد الأسئلة. يرجى المحاولة مرة أخرى.");
+      throw error;
+    }
   };
 
   return (
-    <Router>
+    <HashRouter>
       <div className="max-w-md mx-auto h-screen bg-white relative shadow-2xl overflow-hidden flex flex-col border-x border-slate-200">
         <Routes>
           <Route 
@@ -83,7 +88,7 @@ const App: React.FC = () => {
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </div>
-    </Router>
+    </HashRouter>
   );
 };
 

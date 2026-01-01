@@ -12,7 +12,8 @@ export const generateQuestions = async (
   count: number,
   chapter?: string
 ): Promise<Question[]> => {
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
+  // Always create a new GoogleGenAI instance right before making an API call.
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   
   const prompt = `أنت الخبير التعليمي المعتمد على تقنية Gemini 3 Pro. 
   المحتوى التعليمي الأساسي: "${content}"
@@ -54,6 +55,7 @@ export const generateQuestions = async (
       }
     });
 
+    // Directly access the .text property of GenerateContentResponse.
     return JSON.parse(response.text || "[]");
   } catch (error) {
     console.error("Gemini Generation Error:", error);
@@ -65,7 +67,8 @@ export const getChatResponse = async (
   message: string,
   context: string
 ) => {
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
+  // Always create a new GoogleGenAI instance right before making an API call.
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   
   const chat = ai.chats.create({
     model: MODEL_NAME,
